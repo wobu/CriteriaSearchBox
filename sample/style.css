@@ -1,0 +1,64 @@
+body {
+	font-family: Arial,sans-serif;
+	font-size: 13px;
+}
+
+#container {
+	width: 500px;
+	background: none repeat scroll 0 0 #F1F1F1;
+    border: 1px solid #D2D2D2;
+    margin: auto;
+    top: 100px;
+    position: relative;
+    padding: 50px 100px;
+}
+
+/*
+ * Search Box Design (Google+)
+ */
+
+#criteriaSearchBox {
+	border: 1px solid #C4C4C4; 
+    padding: 3px;   
+	box-shadow: 0 2px #F7F7F7;
+	background: -moz-linear-gradient(center top , #F6F6F6, white) repeat scroll 0 0 white;
+}
+
+#criteriaSearchBox input {
+	height: 30px;
+    line-height: 30px;
+}
+
+#criteriaSearchBox input[type='search'] {
+	background: none repeat scroll 0 0 transparent;
+	border: none;
+	outline: none;
+	padding: 0;
+	max-width: 100%;
+}
+
+#criteriaSearchBox input[type='submit'] {
+	background-color: #4D90FE;
+    background-image: -moz-linear-gradient(center top , #4D90FE, #4787ED);
+    color: #FFFFFF;
+    cursor: pointer;
+    border-radius: 2px 2px 2px 2px;
+    border: 1px solid #3079ED;
+    padding: 4px 8px;
+}
+
+#criteriaSearchBox input[type='submit']:hover {
+	border-color: #2F5BB7;
+}
+
+#criteriaSearchBox span.actionSection {
+	float: right;
+}
+
+#criteriaSearchBox span.criteriaSection {
+	margin: 1px 4px;
+}
+
+#criteriaSearchBox span.inputSection {
+	margin: 1px 4px;
+}
