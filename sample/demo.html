@@ -9,21 +9,57 @@
 </head>
 <body>
 	<script type="application/javascript">
-		$(document).ready(function(){
-			$('#criteriaSearchBox').criteriaSearchBox();
+		$(document).ready(function () {
+
+			var categories = [
+				{
+					id: 'category1',
+					displayValue: 'Category 1',
+					type: 'category',
+					parent: ''
+
+				},
+				{
+					id: 'category2',
+					displayValue: 'Category 2',
+					type: 'category',
+					parent: ''
+
+				},
+				{
+					id: 'subcategory1.1',
+					displayValue: 'Subcategory 1.1',
+					type: 'category',
+					parent: 'category1'
+
+				}
+
+			];
+
+			$('#criteriaSearchBox2').criteriaSearchBox({ categories: categories });
 		});
 	</script>
 
-	<div id="container">
+	<div class="container">
 		<form action="" method="get">
-			<div id="criteriaSearchBox">
+			<input type="search" id="criteriaSearchBox2" name="criteriaSearchBox2" autocomplete="off" autofocus="autofocus">
+		</form>
+	</div>
+
+	<div class="container">
+		<form action="" method="get">
+			<div class="criteriaSearchBoxContainer">
 				<span class="actionSection">
-					<input type="submit" value="Search" />
+					<button type="submit">Search</button>
 				</span>
 				<span class="criteriaSection"></span>
 				<span class="inputSection">
-					<input type="search" name="criteriaSearchBox" autocomplete="off" autofocus="true">
+					<input type="search" id="criteriaSearchBox" name="criteriaSearchBox" autocomplete="off" autofocus="autofocus" list="test">
 				</span>
+			</div>
+			<div class="dropDownContainer">
+				<div id="option1">option1</div>
+				<div id="option2">option2</div>
 			</div>
 		</form>
 	</div>

@@ -3,7 +3,7 @@ body {
 	font-size: 13px;
 }
 
-#container {
+.container {
 	width: 500px;
 	background: none repeat scroll 0 0 #F1F1F1;
     border: 1px solid #D2D2D2;
@@ -17,27 +17,24 @@ body {
  * Search Box Design (Google+)
  */
 
-#criteriaSearchBox {
+div.criteriaSearchBoxContainer {
 	border: 1px solid #C4C4C4; 
     padding: 3px;   
 	box-shadow: 0 2px #F7F7F7;
 	background: -moz-linear-gradient(center top , #F6F6F6, white) repeat scroll 0 0 white;
+	min-height: 28px;
 }
 
-#criteriaSearchBox input {
-	height: 30px;
-    line-height: 30px;
-}
-
-#criteriaSearchBox input[type='search'] {
+div.criteriaSearchBoxContainer input[type='search'] {
 	background: none repeat scroll 0 0 transparent;
 	border: none;
 	outline: none;
 	padding: 0;
-	max-width: 100%;
+	height: 28px;
+    line-height: 28px;
 }
 
-#criteriaSearchBox input[type='submit'] {
+div.criteriaSearchBoxContainer button {
 	background-color: #4D90FE;
     background-image: -moz-linear-gradient(center top , #4D90FE, #4787ED);
     color: #FFFFFF;
@@ -47,18 +44,31 @@ body {
     padding: 4px 8px;
 }
 
-#criteriaSearchBox input[type='submit']:hover {
+div.criteriaSearchBoxContainer button:hover {
 	border-color: #2F5BB7;
 }
 
-#criteriaSearchBox span.actionSection {
+div.criteriaSearchBoxContainer span.actionSection {
 	float: right;
 }
 
-#criteriaSearchBox span.criteriaSection {
+div.criteriaSearchBoxContainer span.criteriaSection 
+{
+	float: left;
 	margin: 1px 4px;
 }
 
-#criteriaSearchBox span.inputSection {
+div.criteriaSearchBoxContainer span.inputSection {
 	margin: 1px 4px;
+}
+
+div.dropDownContainer {
+	background: none repeat scroll 0 0 #FFFFFF;
+	border-width: 0px 1px 1px;
+	border-style: solid;
+	border-color:  #C4C4C4;
+	box-shadow: 0 2px #F7F7F7;
+	position: relative;
+	max-height: 200px;
+	z-index: 999;
 }
