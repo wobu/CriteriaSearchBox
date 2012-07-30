@@ -52,7 +52,7 @@ div.criteriaSearchBoxContainer span.actionSection {
 	float: right;
 }
 
-div.criteriaSearchBoxContainer span.criteriaSection 
+div.criteriaSearchBoxContainer span.selectedCriteriaSection 
 {
 	float: left;
 	margin: 1px 4px;
@@ -62,13 +62,13 @@ div.criteriaSearchBoxContainer span.inputSection {
 	margin: 1px 4px;
 }
 
-div.dropDownContainer {
+div.criteriaDropDownContainer {
 	background: none repeat scroll 0 0 #FFFFFF;
 	border-width: 0px 1px 1px;
 	border-style: solid;
 	border-color:  #C4C4C4;
 	box-shadow: 0 2px #F7F7F7;
 	position: relative;
-	max-height: 200px;
+	height: 150px;
 	z-index: 999;
 }

@@ -10,33 +10,7 @@
 <body>
 	<script type="application/javascript">
 		$(document).ready(function () {
-
-			var categories = [
-				{
-					id: 'category1',
-					displayValue: 'Category 1',
-					type: 'category',
-					parent: ''
-
-				},
-				{
-					id: 'category2',
-					displayValue: 'Category 2',
-					type: 'category',
-					parent: ''
-
-				},
-				{
-					id: 'subcategory1.1',
-					displayValue: 'Subcategory 1.1',
-					type: 'category',
-					parent: 'category1'
-
-				}
-
-			];
-
-			$('#criteriaSearchBox2').criteriaSearchBox({ categories: categories });
+			$('#criteriaSearchBox2').criteriaSearchBox({ feederUrl: 'http://localhost/CriteriaSearchBoxSampleWebService.Net/api' });
 		});
 	</script>
 
@@ -57,7 +31,7 @@
 					<input type="search" id="criteriaSearchBox" name="criteriaSearchBox" autocomplete="off" autofocus="autofocus" list="test">
 				</span>
 			</div>
-			<div class="dropDownContainer">
+			<div class="criteriaDropDownContainer">
 				<div id="option1">option1</div>
 				<div id="option2">option2</div>
 			</div>

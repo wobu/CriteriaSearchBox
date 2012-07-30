@@ -3,15 +3,15 @@
 	var defaultSettings = {
 		feederUrl: '',
 		searchUrl: '',
-		categories: []
+		criterias: []
 	},
 	constants = {
 		jQueryPluginName: 'criteriaSearchBox',
 		searchBoxContainerClassName: 'criteriaSearchBoxContainer',
 		actionSectionClassName: 'actionSection',
-		criteriaSectionClassName: 'criteriaSection',
+		selectedCriteriaSectionClassName: 'selectedCriteriaSection',
 		inputSectionClassName: 'inputSection',
-		dropDownContainerClassName: 'dropDownContainer'
+		criteriaDropDownContainerClassName: 'criteriaDropDownContainer'
 	};
 
 	var CriteriaSearchBox = function (element, options) {
@@ -19,40 +19,86 @@
 		var object = this;
 		var settings = $.extend(defaultSettings, options || {});
 
-		var container, criteriaSection, inputSection, actionSection, searchButton, dropDownContainer;
+		var container, criteriaSection, inputSection, actionSection, searchButton, criteriaDropDownContainer,
+			selectedCriterias = [];
 
-		var init = function() {
+		var init = function () {
 			if (object.element.is('input')) {
 				// TODO validate for input element
 
 				container = $('<div>').addClass(constants.searchBoxContainerClassName);
-				criteriaSection = $('<span>').addClass(constants.criteriaSectionClassName);
+				selectedCriteriaSection = $('<span>').addClass(constants.selectedCriteriaSectionClassName);
 				inputSection = $('<span>').addClass(constants.inputSectionClassName);
 				actionSection = $('<span>').addClass(constants.actionSectionClassName);
 				searchButton = $('<button type="submit">').html('Search'); // TODO
-				dropDownContainer = $('<div>').addClass(constants.dropDownContainerClassName).css({display: 'none'});
+				criteriaDropDownContainer = $('<div>').addClass(constants.criteriaDropDownContainerClassName).css({ display: 'none' });
 
 				// TODO initialization
-				object.element.after(dropDownContainer);
+				object.element.after(criteriaDropDownContainer);
 				object.element.wrap(container);
 				object.element.before(actionSection);
-				object.element.before(criteriaSection);
+				object.element.before(selectedCriteriaSection);
 				object.element.wrap(inputSection);
 				searchButton.appendTo(actionSection);
 
 				object.element.focus(onFocus);
 				object.element.focusout(onFocusout);
+				object.element.keyup(onSearchChanged);
 			}
 		};
 
-		var onFocus = function() {
+		var onFocus = function () {
 			// TODO initialied drop down
-			dropDownContainer.show();
+			criteriaDropDownContainer.show();
+			initializeCriteriaDropDownList();
 		};
 
-		var onFocusout = function() {
+		var onFocusout = function () {
 			// TODO initialied drop down
-			dropDownContainer.hide();
+			criteriaDropDownContainer.hide();
+		};
+
+		var onSearchChanged = function () {
+			// TODO initialied drop down
+			initializeCriteriaDropDownList();
+		};
+
+		var initializeCriteriaDropDownList = function () {
+			resetCriteriaDropDownList();
+
+			var searchExpression = object.element.val();
+
+			if (selectedCriterias.length === 0) {
+				$.ajax({
+					url: settings.feederUrl,
+					dataType: 'json',
+					type: "GET",
+					data: { searchExpression: searchExpression }
+				}).done(function (data) {
+					$.each(data, function (index, value) {
+						var item = $('<div>').html(value.displayValue);
+
+						criteriaDropDownContainer.append(item)
+					});
+				});
+			} else {
+				// TODO
+				$.ajax({
+					url: settings.feederUrl,
+					dataType: 'json',
+					type: "POST",
+					data: JSON.stringify({ searchExpression: searchExpression, selectedCriterias: selectedCriterias }),
+					success: function (data) {
+						$(data, function (index, value) {
+						});
+					}
+				});
+			}
+		};
+
+		var resetCriteriaDropDownList = function () {
+			// simple reset the container
+			criteriaDropDownContainer.html('');
 		};
 
 		init();
