@@ -8,7 +8,7 @@ body {
 	background: none repeat scroll 0 0 #F1F1F1;
     border: 1px solid #D2D2D2;
     margin: auto;
-    top: 100px;
+    top: 50px;
     position: relative;
     padding: 50px 100px;
 }
@@ -20,7 +20,7 @@ body {
 div.criteriaSearchBoxContainer {
 	border: 1px solid #C4C4C4; 
     padding: 3px;   
-	box-shadow: 0 2px #F7F7F7;
+	box-shadow: 0 0 8px #E2E2E2;
 	background: -moz-linear-gradient(center top , #F6F6F6, white) repeat scroll 0 0 white;
 	min-height: 28px;
 }
@@ -67,8 +67,8 @@ div.criteriaDropDownContainer {
 	border-width: 0px 1px 1px;
 	border-style: solid;
 	border-color:  #C4C4C4;
-	box-shadow: 0 2px #F7F7F7;
-	position: relative;
-	height: 150px;
+	box-shadow: 0 0 8px #E2E2E2;
+	max-height: 150px;
 	z-index: 999;
+	position: absolute;
 }
