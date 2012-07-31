@@ -1,8 +1,3 @@
-body {
-	font-family: Arial,sans-serif;
-	font-size: 13px;
-}
-
 .container {
 	width: 500px;
 	background: none repeat scroll 0 0 #F1F1F1;
@@ -18,6 +13,8 @@ body {
  */
 
 div.criteriaSearchBoxContainer {
+	font-family: Arial,sans-serif;
+	font-size: 13px;
 	border: 1px solid #C4C4C4; 
     padding: 3px;   
 	box-shadow: 0 0 8px #E2E2E2;
@@ -72,3 +69,17 @@ div.criteriaDropDownContainer {
 	z-index: 999;
 	position: absolute;
 }
+
+div.criteriaDropDownContainer div {
+    color: #333333;
+    cursor: pointer;
+    white-space: nowrap;
+    margin: 0;
+    padding: 6px 16px;
+}
+
+div.criteriaDropDownContainer div.selected {
+    background-color: #EEEEEE;
+}
+
+

@@ -2,8 +2,7 @@
 
 	var defaultSettings = {
 		feederUrl: '',
-		searchUrl: '',
-		criterias: []
+		searchUrl: ''
 	},
 	constants = {
 		jQueryPluginName: 'criteriaSearchBox',
@@ -11,7 +10,8 @@
 		actionSectionClassName: 'actionSection',
 		selectedCriteriaSectionClassName: 'selectedCriteriaSection',
 		inputSectionClassName: 'inputSection',
-		criteriaDropDownContainerClassName: 'criteriaDropDownContainer'
+		criteriaDropDownContainerClassName: 'criteriaDropDownContainer',
+		selectedClassName: 'selected'
 	};
 
 	var CriteriaSearchBox = function (element, options) {
@@ -20,8 +20,8 @@
 		var settings = $.extend(defaultSettings, options || {});
 
 		var container, criteriaSection, inputSection, actionSection, searchButton, criteriaDropDownContainer,
-			selectedCriterias = [],
-			currentCriteriasAreUpToDate = false;
+			selectedCriterias = [], dropDownCriterias = [], selectedIndex = -1,
+			dropDownCriteriasAreUpToDate = false;
 
 		var init = function () {
 			if (object.element.is('input[type=text]') || object.element.is('input[type=search]')) {
@@ -46,7 +46,7 @@
 
 				object.element.focus(onFocus);
 				object.element.focusout(onFocusout);
-				object.element.keyup(onSearchChanged);
+				object.element.keyup(onKeyUp);
 			} else {
 				console.error('CriteriaSearchBox must be called only on a text or search input element!');
 			}
@@ -59,17 +59,46 @@
 		};
 
 		var onFocusout = function () {
-			criteriaDropDownContainer.hide();
+			// TODO focus out isn't the right moment to hide the drop down
+			//criteriaDropDownContainer.hide();
 		};
 
 		var onSearchChanged = function () {
-			currentCriteriasAreUpToDate = false;
+			dropDownCriteriasAreUpToDate = false;
 			initializeCriteriaDropDownList();
+		};
+
+		var onKeyUp = function (event) {
+			switch (event.which) {
+				case 13: // Enter button
+					if (selectedIndex > -1) {
+						dropDownCriterias[selectedIndex].click();
+						event.preventDefault();
+					}
+					break;
+				case 38: // Arrow up
+					if (selectedIndex > -1) {
+						updateSelectedDropDownItem(selectedIndex, --selectedIndex);
+					}
+
+					event.preventDefault();
+					break;
+				case 40: // Arrow down
+					if ((selectedIndex + 1) < dropDownCriterias.length) {
+						updateSelectedDropDownItem(selectedIndex, ++selectedIndex);
+					}
+
+					event.preventDefault();
+					break;
+				default:
+					onSearchChanged();
+					break;
+			}
 		};
 
 		var initializeCriteriaDropDownList = function () {
 
-			if (!currentCriteriasAreUpToDate) {
+			if (!dropDownCriteriasAreUpToDate) {
 				// TODO avoid flickering when refreshing the content
 				resetCriteriaDropDownList();
 
@@ -83,9 +112,13 @@
 						data: { searchExpression: searchExpression }
 					}).done(function (data) {
 						$.each(data, function (index, value) {
-							var item = $('<div>').html(value.displayValue);
-
-							criteriaDropDownContainer.append(item)
+							dropDownCriterias[index] =
+								new DropDownItem(
+									criteriaDropDownContainer,
+									value,
+									index,
+									function (dropDownItem) { alert('clicked ' + dropDownItem.data.displayValue); },
+									function (dropDownItem) { updateSelectedDropDownItem(selectedIndex, dropDownItem.index); }); // TODO click
 						});
 					});
 				} else {
@@ -102,13 +135,66 @@
 					//					});
 				}
 
-				currentCriteriasAreUpToDate = true;
+				dropDownCriteriasAreUpToDate = true;
 			}
 		};
 
 		var resetCriteriaDropDownList = function () {
-			// simple reset the container
+			selectedIndex = -1;
+			dropDownCriterias = [];
 			criteriaDropDownContainer.html('');
+		};
+
+		var updateSelectedDropDownItem = function (oldIndex, newIndex) {
+
+			if (oldIndex !== -1) {
+				dropDownCriterias[oldIndex].deselect();
+			}
+
+			if (newIndex !== -1) {
+				dropDownCriterias[newIndex].select();
+			}
+
+			selectedIndex = newIndex;
+		};
+
+		init();
+	};
+
+	var DropDownItem = function (container, data, index, onclick, onhover) {
+		var object = this;
+		this.container = container;
+		this.data = data;
+		this.index = index;
+
+		var dropDownItem;
+
+		var init = function () {
+			dropDownItem = $('<div>').append($('<span>').html(data.displayValue));
+			object.container.append(dropDownItem);
+
+			dropDownItem.click(onClick);
+			dropDownItem.hover(onHover);
+		};
+
+		var onClick = function () {
+			onclick(object);
+		};
+
+		var onHover = function () {
+			onhover(object);
+		};
+
+		this.select = function () {
+			dropDownItem.addClass(constants.selectedClassName);
+		};
+
+		this.deselect = function () {
+			dropDownItem.removeClass(constants.selectedClassName);
+		};
+
+		this.click = function () {
+			dropDownItem.click();
 		};
 
 		init();
