@@ -6,11 +6,12 @@
 	},
 	constants = {
 		jQueryPluginName: 'criteriaSearchBox',
-		searchBoxContainerClassName: 'criteriaSearchBoxContainer',
+		criteriaSearchBoxClassName: 'criteriaSearchBox',
+		searchBoxContainerClassName: 'searchBoxContainer',
 		actionSectionClassName: 'actionSection',
 		selectedCriteriaSectionClassName: 'selectedCriteriaSection',
 		inputSectionClassName: 'inputSection',
-		criteriaDropDownContainerClassName: 'criteriaDropDownContainer',
+		dropDownContainerClassName: 'dropDownContainer',
 		selectedClassName: 'selected'
 	};
 
@@ -19,22 +20,25 @@
 		var object = this;
 		var settings = $.extend(defaultSettings, options || {});
 
-		var container, criteriaSection, inputSection, actionSection, searchButton, criteriaDropDownContainer,
+		var criteriaSearchBoxElement, searchBoxContainer, criteriaSection, inputSection, actionSection, searchButton, dropDownContainer,
 			selectedCriterias = [], dropDownCriterias = [], selectedIndex = -1,
 			dropDownCriteriasAreUpToDate = false;
 
 		var init = function () {
 			if (object.element.is('input[type=text]') || object.element.is('input[type=search]')) {
 
-				container = $('<div>').addClass(constants.searchBoxContainerClassName);
+
+				criteriaSearchBoxElement = $('<div>').addClass(constants.criteriaSearchBoxClassName);
+				searchBoxContainer = $('<div>').addClass(constants.searchBoxContainerClassName);
 				selectedCriteriaSection = $('<span>').addClass(constants.selectedCriteriaSectionClassName);
 				inputSection = $('<span>').addClass(constants.inputSectionClassName);
 				actionSection = $('<span>').addClass(constants.actionSectionClassName);
 				searchButton = $('<button type="submit">').html('Search'); // TODO
-				criteriaDropDownContainer = $('<div>').addClass(constants.criteriaDropDownContainerClassName).css({ display: 'none' });
+				dropDownContainer = $('<div>').addClass(constants.dropDownContainerClassName).css({ display: 'none' });
 
-				object.element.after(criteriaDropDownContainer);
-				object.element.wrap(container);
+				object.element.wrap(criteriaSearchBoxElement);
+				object.element.after(dropDownContainer);
+				object.element.wrap(searchBoxContainer);
 				object.element.before(actionSection);
 				object.element.before(selectedCriteriaSection);
 				object.element.wrap(inputSection);
@@ -42,25 +46,31 @@
 
 				// reload container element after DOM manipulation, i.e. for getting his width
 				// TODO exists there a better solution? i am not satisfied with it.
-				container = $('div.' + constants.searchBoxContainerClassName);
+				searchBoxContainer = $('div.' + constants.searchBoxContainerClassName);
 
 				object.element.focus(onFocus);
 				object.element.focusout(onFocusout);
 				object.element.keyup(onKeyUp);
+
+				criteriaSearchBoxElement.click(function (event) {
+					event.preventDefault();
+				});
 			} else {
 				console.error('CriteriaSearchBox must be called only on a text or search input element!');
 			}
 		};
 
 		var onFocus = function () {
-			criteriaDropDownContainer.width(container.innerWidth());
-			criteriaDropDownContainer.slideDown('fast');
+			dropDownContainer.width(searchBoxContainer.innerWidth());
+			dropDownContainer.slideDown('fast');
 			initializeCriteriaDropDownList();
 		};
 
 		var onFocusout = function () {
 			// TODO focus out isn't the right moment to hide the drop down
-			//criteriaDropDownContainer.hide();
+			if (!dropDownContainer.is(':hover')) {
+				dropDownContainer.hide();
+			}
 		};
 
 		var onSearchChanged = function () {
@@ -114,10 +124,10 @@
 						$.each(data, function (index, value) {
 							dropDownCriterias[index] =
 								new DropDownItem(
-									criteriaDropDownContainer,
+									dropDownContainer,
 									value,
 									index,
-									function (dropDownItem) { alert('clicked ' + dropDownItem.data.displayValue); },
+									function (dropDownItem) { dropDownItemClicked(dropDownItem); },
 									function (dropDownItem) { updateSelectedDropDownItem(selectedIndex, dropDownItem.index); }); // TODO click
 						});
 					});
@@ -142,7 +152,7 @@
 		var resetCriteriaDropDownList = function () {
 			selectedIndex = -1;
 			dropDownCriterias = [];
-			criteriaDropDownContainer.html('');
+			dropDownContainer.html('');
 		};
 
 		var updateSelectedDropDownItem = function (oldIndex, newIndex) {
@@ -156,6 +166,16 @@
 			}
 
 			selectedIndex = newIndex;
+		};
+
+		var dropDownItemClicked = function (dropDownItem) {
+			selectedCriterias.push(dropDownItem);
+
+			// reset selection and index to avoid double clicks or endless loops with hitting enter
+			updateSelectedDropDownItem(selectedIndex, -1);
+			selectedIndex = -1;
+
+			object.element.focus();
 		};
 
 		init();
