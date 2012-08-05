@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Web.Http;
 using SampleSearchWebService.Net.Models;
@@ -9,54 +10,33 @@ namespace SampleSearchWebService.Net.Controllers
 {
     public class SearchController : ApiController
     {
-		public List<Criteria> SampleData
+		public HttpResponseMessage Get()
 		{
-			get;
-			set;
+			HttpResponseMessage response = Request.CreateResponse(HttpStatusCode.OK);
+			response.CreateContent<string>("search without any data received.");
+
+			return response;
 		}
 
-		public SearchController()
+		public HttpResponseMessage Get(string searchExpression)
 		{
-			SampleData = new List<Criteria>();
+			HttpResponseMessage response = Request.CreateResponse(HttpStatusCode.OK);
+			response.CreateContent<string>(String.Format("search with search expression '{0}' received.", searchExpression));
 
-			SampleData.Add(new Criteria { id = "category1", displayValue = "Category 1", parent = "", type = "category"} );
-			SampleData.Add(new Criteria { id = "category2", displayValue = "Category 2", parent = "", type = "category"} );
-			SampleData.Add(new Criteria { id = "category1.1", displayValue = "Category 1.1", parent = "category1", type = "category"} );
+			return response;
 		}
 
-		public IList<Criteria> Get()
-		{
-			return SampleData.Where(
-				_criteria => String.IsNullOrEmpty(_criteria.parent)).ToList();
-		}
+		public HttpResponseMessage Post(SearchRequest searchRequest)
+		{	
+			HttpResponseMessage response = Request.CreateResponse(HttpStatusCode.OK);
+			response.CreateContent<string>(
+				String.Format(
+					"search with search expression '{0}' and criterias '{1}' received.", 
+					searchRequest.SearchExpression, 
+					searchRequest.SelectedCriterias.Count)
+				);
 
-		public IList<Criteria> Get(string searchExpression)
-        {
-			searchExpression = searchExpression ?? String.Empty;
-
-			return SampleData.Where(
-				_criteria => String.IsNullOrEmpty(_criteria.parent) 
-							&& _criteria.displayValue.ToLower().Contains(searchExpression.ToLower())).ToList();
-        }
-
-		public IList<Criteria> Post(string searchExpression)
-		{
-			searchExpression = searchExpression ?? String.Empty;
-
-			return SampleData.Where(
-				_criteria => String.IsNullOrEmpty(_criteria.parent)
-							&& _criteria.displayValue.ToLower().Contains(searchExpression.ToLower())).ToList();
-		}
-
-		public IList<Criteria> Post(string searchExpression, IQueryable<Criteria> selectedCriterias)
-		{
-			searchExpression = searchExpression ?? String.Empty;
-
-			IList<Criteria> retVal = new List<Criteria>();
-
-			// TODO
-
-            return retVal;
+			return response;
 		}
     }
 }

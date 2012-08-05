@@ -5,12 +5,16 @@
 	<meta charset="utf-8">
 	<link rel="stylesheet" type="text/css" href="style.css" />
 	<script type="application/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7/jquery.min.js"></script>
-	<script type="application/javascript" src="../src/jquery.criteriaSearchBox..js"></script>
+	<script type="application/javascript" src="../src/jquery.criteriaSearchBox.js"></script>
 </head>
 <body>
 	<script type="application/javascript">
 		$(document).ready(function () {
-			$('#criteriaSearchBox2').criteriaSearchBox({ feederUrl: 'http://localhost/CriteriaSearchBoxSampleWebService.Net/api' });
+			$('#criteriaSearchBox2').criteriaSearchBox(
+				{ 
+					autoCompletionUrl: 'http://localhost/CriteriaSearchBoxSampleWebService.Net/api/AutoCompletion',
+					searchUrl: 'http://localhost/CriteriaSearchBoxSampleWebService.Net/api/Search'
+				});
 		});
 	</script>
 

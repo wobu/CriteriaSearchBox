@@ -18,7 +18,7 @@ namespace SampleSearchWebService.Net
 		{
 			routes.MapHttpRoute(
 				name: "DefaultApi",
-				routeTemplate: "api/{searchExpression}",
+				routeTemplate: "api/{controller}/{searchExpression}",
 				defaults: new { controller = "Search",  searchExpression = RouteParameter.Optional }
 			);
 		}

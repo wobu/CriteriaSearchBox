@@ -11,5 +11,6 @@ namespace SampleSearchWebService.Net.Models
 		public string displayValue { get; set; }
 		public string type { get; set; }
 		public string parent { get; set; }
+		public int level { get; set; }
 	}
 }
