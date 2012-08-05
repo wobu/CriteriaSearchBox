@@ -1,0 +1,5 @@
+# .net sample webservice
+/sample/CriteriaSearchBoxSampleWebService.Net/CriteriaSearchBoxSampleWebService.Net/obj
+/sample/CriteriaSearchBoxSampleWebService.Net/CriteriaSearchBoxSampleWebService.Net/bin
+/sample/CriteriaSearchBoxSampleWebService.Net/**/*.suo
+/sample/CriteriaSearchBoxSampleWebService.Net/**/*.user
