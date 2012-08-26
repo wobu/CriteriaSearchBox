@@ -30,17 +30,17 @@
 
 				criteriaSearchBoxElement = $('<div>').addClass(constants.criteriaSearchBoxClassName);
 				searchBoxContainer = $('<div>').addClass(constants.searchBoxContainerClassName);
-				selectedCriteriaSection = $('<span>').addClass(constants.selectedCriteriaSectionClassName);
+				selectedCriteriaSection = $('<div>').addClass(constants.selectedCriteriaSectionClassName);
 				inputSection = $('<span>').addClass(constants.inputSectionClassName);
 				actionSection = $('<span>').addClass(constants.actionSectionClassName);
 				searchButton = $('<button type="submit">').html('Search'); // TODO
 				dropDownContainer = $('<div>').addClass(constants.dropDownContainerClassName).css({ display: 'none' });
 
 				object.element.wrap(criteriaSearchBoxElement);
+				object.element.before(selectedCriteriaSection);
 				object.element.after(dropDownContainer);
 				object.element.wrap(searchBoxContainer);
 				object.element.before(actionSection);
-				object.element.before(selectedCriteriaSection);
 				object.element.wrap(inputSection);
 				searchButton.appendTo(actionSection);
 

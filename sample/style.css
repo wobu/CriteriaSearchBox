@@ -47,6 +47,11 @@ div.criteriaSearchBox div.searchBoxContainer button {
     padding: 4px 8px;
 }
 
+div.criteriaSearchBox div.searchBoxContainer > span {
+	height: 24px;
+	line-height: 24px;
+}
+
 div.criteriaSearchBox div.searchBoxContainer button:hover {
 	border-color: #2F5BB7;
 }
@@ -55,16 +60,11 @@ div.criteriaSearchBox div.searchBoxContainer span.actionSection {
 	float: right;
 }
 
-div.criteriaSearchBox div.searchBoxContainer span.selectedCriteriaSection 
-{
-	float: left;
-	margin: 1px 4px;
-}
-
 div.criteriaSearchBox div.searchBoxContainer span.inputSection {
 	margin: 1px 4px;
 }
 
+/* drop down */
 div.criteriaSearchBox div.dropDownContainer {
 	background: none repeat scroll 0 0 #FFFFFF;
 	border-width: 0px 1px 1px;
@@ -88,4 +88,30 @@ div.criteriaSearchBox div.dropDownContainer div.selected {
     background-color: #EEEEEE;
 }
 
+/* selected criterias */
 
+div.criteriaSearchBox div.selectedCriteriaSection {
+	margin: 5px 0px;
+}
+
+div.criteriaSearchBox div.selectedCriteriaSection a {
+	height: 14px;
+	margin: 2px;
+	padding: 2px 5px;
+    vertical-align: middle;
+    border-radius: 3px 3px 3px 3px;
+    background: repeat scroll 0 0 #28AFE7;
+    border: 1px solid #057BAC;
+    color: #FFFFFF;  
+    display: inline-block;  
+}
+
+div.criteriaSearchBox div.selectedCriteriaSection a.category {
+    background: repeat scroll 0 0 #77BB4E;
+    border: 1px solid #57A02F;
+    color: #FFFFFF;
+}
+
+div.criteriaSearchBox div.selectedCriteriaSection a i {
+	padding-right: 5px;
+}

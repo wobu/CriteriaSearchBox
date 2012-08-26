@@ -4,6 +4,7 @@
 	<title>CriteriaSearchBox - Demo</title>
 	<meta charset="utf-8">
 	<link rel="stylesheet" type="text/css" href="style.css" />
+	<link rel="stylesheet" type="text/css" href="../lib/FortAwesome/css/font-awesome.css" />
 	<script type="application/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7/jquery.min.js"></script>
 	<script type="application/javascript" src="../src/jquery.criteriaSearchBox.js"></script>
 </head>
@@ -19,21 +20,30 @@
 	</script>
 
 	<div class="container">
-		<input type="search" id="criteriaSearchBox2" name="criteriaSearchBox2" autocomplete="off" autofocus="autofocus">
+		<input type="search" id="criteriaSearchBox2" name="criteriaSearchBox2" autocomplete="off" autofocus="autofocus" />
 	</div>
 	<br />
 
 	<div class="container">
-		Dummy:
+		HTML Dummy:
 		<form action="" method="get">
 			<div class="criteriaSearchBox">
+				<div class="selectedCriteriaSection">
+					<a class="category"><i class="icon-remove"></i>Test Category</a>
+					<a><i class="icon-remove"></i>Test Item</a>
+					<a><i class="icon-remove"></i>Test Item</a>
+					<a><i class="icon-remove"></i>Test Item</a>
+					<a><i class="icon-remove"></i>Test Item</a>
+					<a><i class="icon-remove"></i>Test Item</a>
+					<a><i class="icon-remove"></i>Test Item</a>
+					<a><i class="icon-remove"></i>Test Item</a>
+				</div>
 				<div class="searchBoxContainer">
 					<span class="actionSection">
 						<button type="submit">Search</button>
 					</span>
-					<span class="criteriaSection"></span>
 					<span class="inputSection">
-						<input type="search" id="criteriaSearchBox" name="criteriaSearchBox" autocomplete="off">
+						<input type="search" id="criteriaSearchBox" name="criteriaSearchBox" autocomplete="off" />
 					</span>
 				</div>
 				<div class="dropDownContainer">
