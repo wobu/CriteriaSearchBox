@@ -90,12 +90,13 @@ div.criteriaSearchBox div.dropDownContainer div.selected {
 
 /* selected criterias */
 
-div.criteriaSearchBox div.selectedCriteriaSection {
-	margin: 5px 0px;
+div.criteriaSearchBox div.selectedCriteriaContainer {
+	padding: 4px 2px;
 }
 
-div.criteriaSearchBox div.selectedCriteriaSection a {
+div.criteriaSearchBox div.selectedCriteriaContainer a {
 	height: 14px;
+	line-height: 14px;
 	margin: 2px;
 	padding: 2px 5px;
     vertical-align: middle;
@@ -104,14 +105,24 @@ div.criteriaSearchBox div.selectedCriteriaSection a {
     border: 1px solid #057BAC;
     color: #FFFFFF;  
     display: inline-block;  
+    cursor: pointer;
 }
 
-div.criteriaSearchBox div.selectedCriteriaSection a.category {
+div.criteriaSearchBox div.selectedCriteriaContainer a:hover {
+	background: repeat scroll 0 0 #057BAC;
+    border: 1px solid #057BAC;
+}
+
+div.criteriaSearchBox div.selectedCriteriaContainer a.category {
     background: repeat scroll 0 0 #77BB4E;
     border: 1px solid #57A02F;
-    color: #FFFFFF;
 }
 
-div.criteriaSearchBox div.selectedCriteriaSection a i {
+div.criteriaSearchBox div.selectedCriteriaContainer a.category:hover {
+    background: repeat scroll 0 0 #57A02F;
+    border: 1px solid #57A02F;
+}
+
+div.criteriaSearchBox div.selectedCriteriaContainer a i {
 	padding-right: 5px;
 }

@@ -24,7 +24,7 @@ namespace SampleSearchWebService.Net.Controllers
 			SampleData.Add(new Criteria { id = "category1.1", displayValue = "Category 1.1 (HasChilds)", parent = "category1", type = "category", level = 1 });
 			SampleData.Add(new Criteria { id = "category1.1.1", displayValue = "Category 1.1.1", parent = "category1.1", type = "category", level = 2 });
 			SampleData.Add(new Criteria { id = "category1.1.2", displayValue = "Category 1.1.2", parent = "category1.1", type = "category", level = 2 });
-			SampleData.Add(new Criteria { id = "category1.1.3", displayValue = "Category 1.1.3", parent = "category1.1", type = "category", level = 2 });
+			SampleData.Add(new Criteria { id = "item1.1.3", displayValue = "Item 1.1.3", parent = "category1.1", type = "", level = 2 });
 		}
 
 		public IList<Criteria> Get()

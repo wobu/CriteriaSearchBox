@@ -9,10 +9,11 @@
 		criteriaSearchBoxClassName: 'criteriaSearchBox',
 		searchBoxContainerClassName: 'searchBoxContainer',
 		actionSectionClassName: 'actionSection',
-		selectedCriteriaSectionClassName: 'selectedCriteriaSection',
+		selectedCriteriaContainerClassName: 'selectedCriteriaContainer',
 		inputSectionClassName: 'inputSection',
 		dropDownContainerClassName: 'dropDownContainer',
-		selectedClassName: 'selected'
+		selectedClassName: 'selected',
+		removeIconClassName: 'icon-remove'
 	};
 
 	var CriteriaSearchBox = function (element, options) {
@@ -30,14 +31,14 @@
 
 				criteriaSearchBoxElement = $('<div>').addClass(constants.criteriaSearchBoxClassName);
 				searchBoxContainer = $('<div>').addClass(constants.searchBoxContainerClassName);
-				selectedCriteriaSection = $('<div>').addClass(constants.selectedCriteriaSectionClassName);
+				selectedCriteriaContainer = $('<div>').addClass(constants.selectedCriteriaContainerClassName);
 				inputSection = $('<span>').addClass(constants.inputSectionClassName);
 				actionSection = $('<span>').addClass(constants.actionSectionClassName);
 				searchButton = $('<button type="submit">').html('Search'); // TODO
 				dropDownContainer = $('<div>').addClass(constants.dropDownContainerClassName).css({ display: 'none' });
 
 				object.element.wrap(criteriaSearchBoxElement);
-				object.element.before(selectedCriteriaSection);
+				object.element.before(selectedCriteriaContainer);
 				object.element.after(dropDownContainer);
 				object.element.wrap(searchBoxContainer);
 				object.element.before(actionSection);
@@ -63,12 +64,12 @@
 		};
 
 		var onFocus = function () {
+			initializeCriteriaDropDownList();
+
 			if (!dropDownContainer.is(':visible')) {
 				dropDownContainer.width(searchBoxContainer.innerWidth());
 				dropDownContainer.slideDown('fast');
 			}
-
-			initializeCriteriaDropDownList();
 		};
 
 		var onFocusout = function () {
@@ -88,7 +89,7 @@
 				dataType: 'json',
 				type: "POST",
 				contentType: "application/json",
-				data: JSON.stringify({ searchExpression: object.element.val(), selectedCriterias: selectedCriterias }),
+				data: JSON.stringify({ searchExpression: object.element.val(), selectedCriterias: selectedCriterias })
 			});
 		};
 
@@ -147,12 +148,19 @@
 						});
 					});
 				} else {
+					// get array containing all data of the selected criteria items
+					var selectedData = []
+
+					$.each(selectedCriterias, function (index, criteriaItem) {
+						selectedData.push(criteriaItem.data);
+					});
+
 					$.ajax({
 						url: settings.autoCompletionUrl,
 						dataType: 'json',
 						type: "POST",
 						contentType: "application/json",
-						data: JSON.stringify({ searchExpression: searchExpression, selectedCriterias: selectedCriterias }),
+						data: JSON.stringify({ searchExpression: searchExpression, selectedCriterias: selectedData })
 					}).done(function (data) {
 						$.each(data, function (index, value) {
 							dropDownCriterias[index] =
@@ -172,8 +180,14 @@
 
 		var resetCriteriaDropDownList = function () {
 			selectedIndex = -1;
+
+			// ensure destroying of all object, cause we don't need them anymore
+			for (var item in dropDownCriterias) {
+				delete item;
+			}
+
 			dropDownCriterias = [];
-			dropDownContainer.html('');
+			dropDownContainer.empty();
 		};
 
 		var updateSelectedDropDownItem = function (oldIndex, newIndex) {
@@ -190,7 +204,11 @@
 		};
 
 		var dropDownItemClicked = function (dropDownItem) {
-			selectedCriterias.push(dropDownItem.data);
+			var selectedCriteriaItem = new SelectedCriteriaItem(
+											selectedCriteriaContainer,
+											dropDownItem.data,
+											function (selectedCriteriaItem) { selectedCriteriaItemClicked(selectedCriteriaItem); });
+			selectedCriterias.push(selectedCriteriaItem);
 
 			// reset selection and index to avoid double clicks or endless loops with hitting enter
 			updateSelectedDropDownItem(selectedIndex, -1);
@@ -198,8 +216,61 @@
 
 			dropDownCriteriasAreUpToDate = false;
 
+			object.element.val('');
 			object.element.focus();
 		};
+
+		var selectedCriteriaItemClicked = function (selectedCriteriaItem) {
+			// get all childs and remove them too
+			var itemsToRemove = [selectedCriteriaItem];
+			var lastChildItem = selectedCriteriaItem;
+
+			$.each(selectedCriterias, function (index, item) {
+				if (item.data.parent === lastChildItem.data.id) {
+					itemsToRemove.push(item);
+					lastChildItem = item;
+				}
+			});
+
+			$.each(itemsToRemove, function (index, item) {
+				var index = $.inArray(item, selectedCriterias);
+				selectedCriterias.splice(index, 1);
+				item.remove();
+			});
+
+			object.element.focus();
+			onSearchChanged();
+		};
+
+		init();
+	};
+
+	var SelectedCriteriaItem = function (container, data, onclick) {
+		var object = this;
+		this.container = container;
+		this.data = data;
+		this.element;
+
+		var init = function () {
+			var removeIconElement = $('<i>').addClass(constants.removeIconClassName);
+
+			object.element = $('<a>').addClass(object.data.type);
+			object.element.append(removeIconElement);
+			object.element.append(object.data.displayValue);
+
+			object.container.append(object.element);
+
+			object.element.click(onClick);
+		};
+
+		var onClick = function () {
+			onclick(object);
+		};
+
+		this.remove = function () {
+			object.element.remove();
+			delete object;
+		}
 
 		init();
 	};
