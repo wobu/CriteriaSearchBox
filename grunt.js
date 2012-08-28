@@ -37,7 +37,7 @@ module.exports = function(grunt) {
       options: {
         curly: true,
         eqeqeq: true,
-        immed: true,
+        immed: false,
         latedef: true,
         newcap: true,
         noarg: true,
@@ -48,7 +48,9 @@ module.exports = function(grunt) {
         browser: true
       },
       globals: {
-        jQuery: true
+        $: true,
+		jQuery: true,
+		console: true
       }
     },
     uglify: {}

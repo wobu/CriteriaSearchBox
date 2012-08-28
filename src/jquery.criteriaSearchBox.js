@@ -1,7 +1,3 @@
-/* Hints for JSHint */
-/*jshint immed:false */
-/*global $:false, jQuery:false, console:false */
-
 (function ($) {
 
 	var defaultSettings = {
