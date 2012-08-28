@@ -1,3 +1,7 @@
+/* Hints for JSHint */
+/*jshint immed:false */
+/*global $:false, jQuery:false, console:false */
+
 (function ($) {
 
 	var defaultSettings = {
@@ -21,7 +25,7 @@
 		var object = this;
 		var settings = $.extend(defaultSettings, options || {});
 
-		var criteriaSearchBoxElement, searchBoxContainer, criteriaSection, inputSection, actionSection, searchButton, dropDownContainer,
+		var criteriaSearchBoxElement, searchBoxContainer, selectedCriteriaContainer, inputSection, actionSection, searchButton, dropDownContainer,
 			selectedCriterias = [], dropDownCriterias = [], selectedIndex = -1,
 			dropDownCriteriasAreUpToDate = false;
 
@@ -59,7 +63,9 @@
 					event.preventDefault();
 				});
 			} else {
-				console.error('CriteriaSearchBox must be called only on a text or search input element!');
+				if (console !== undefined) {
+					console.error('CriteriaSearchBox must be called only on a text or search input element!');
+				}
 			}
 		};
 
@@ -149,7 +155,7 @@
 					});
 				} else {
 					// get array containing all data of the selected criteria items
-					var selectedData = []
+					var selectedData = [];
 
 					$.each(selectedCriterias, function (index, criteriaItem) {
 						selectedData.push(criteriaItem.data);
@@ -180,12 +186,6 @@
 
 		var resetCriteriaDropDownList = function () {
 			selectedIndex = -1;
-
-			// ensure destroying of all object, cause we don't need them anymore
-			for (var item in dropDownCriterias) {
-				delete item;
-			}
-
 			dropDownCriterias = [];
 			dropDownContainer.empty();
 		};
@@ -233,8 +233,7 @@
 			});
 
 			$.each(itemsToRemove, function (index, item) {
-				var index = $.inArray(item, selectedCriterias);
-				selectedCriterias.splice(index, 1);
+				selectedCriterias.splice($.inArray(item, selectedCriterias), 1);
 				item.remove();
 			});
 
@@ -249,7 +248,7 @@
 		var object = this;
 		this.container = container;
 		this.data = data;
-		this.element;
+		this.element = null;
 
 		var init = function () {
 			var removeIconElement = $('<i>').addClass(constants.removeIconClassName);
@@ -269,8 +268,7 @@
 
 		this.remove = function () {
 			object.element.remove();
-			delete object;
-		}
+		};
 
 		init();
 	};
