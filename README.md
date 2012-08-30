@@ -30,3 +30,12 @@ npm install -g
 ```bash
 grunt
 ```
+
+
+Development
+-----------
+
+### Start static web server
+```bash
+node server
+```
