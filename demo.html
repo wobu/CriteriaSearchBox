@@ -6,12 +6,12 @@
 	<link rel="stylesheet" type="text/css" href="css/style.css" />
 	<link rel="stylesheet" type="text/css" href="lib/Font-Awesome/css/font-awesome.css" />
 	<script type="application/javascript" src="lib/jquery-1.7.2.min.js"></script>
-	<script type="application/javascript" src="src/jquery.criteriaSearchBox.js"></script>
+	<script type="application/javascript" src="dist/CriteriaSearchBox.js"></script>
 </head>
 <body>
 	<script type="application/javascript">
 		$(document).ready(function () {
-			$('#criteriaSearchBox2').criteriaSearchBox(
+			$('#criteriaSearchBox').criteriaSearchBox(
 				{ 
 					autoCompletionUrl: 'http://localhost/CriteriaSearchBoxSampleWebService.Net/api/AutoCompletion',
 					searchUrl: 'http://localhost/CriteriaSearchBoxSampleWebService.Net/api/Search'
@@ -20,38 +20,7 @@
 	</script>
 
 	<div class="container">
-		<input type="search" id="criteriaSearchBox2" name="criteriaSearchBox2" autocomplete="off" autofocus="autofocus" />
-	</div>
-	<br />
-
-	<div class="container">
-		HTML Dummy:
-		<form action="" method="get">
-			<div class="criteriaSearchBox">
-				<div class="selectedCriteriaContainer">
-					<a class="category"><i class="icon-remove"></i>Test Category</a>
-					<a><i class="icon-remove"></i>Test Item</a>
-					<a><i class="icon-remove"></i>Test Item</a>
-					<a><i class="icon-remove"></i>Test Item</a>
-					<a><i class="icon-remove"></i>Test Item</a>
-					<a><i class="icon-remove"></i>Test Item</a>
-					<a><i class="icon-remove"></i>Test Item</a>
-					<a><i class="icon-remove"></i>Test Item</a>
-				</div>
-				<div class="searchBoxContainer">
-					<span class="actionSection">
-						<button type="submit">Search</button>
-					</span>
-					<span class="inputSection">
-						<input type="search" id="criteriaSearchBox" name="criteriaSearchBox" autocomplete="off" />
-					</span>
-				</div>
-				<div class="dropDownContainer">
-					<div id="option1">option1</div>
-					<div id="option2">option2</div>
-				</div>
-			</div>
-		</form>
+		<input type="search" id="criteriaSearchBox" name="criteriaSearchBox" autocomplete="off" autofocus="autofocus" />
 	</div>
 </body>
 </html>
