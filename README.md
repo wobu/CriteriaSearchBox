@@ -35,7 +35,9 @@ grunt
 Development
 -----------
 
-### Start static web server
+### Start web server
 ```bash
 node server
 ```
+
+this web server will server the static files and will provide a simple api webservice for testing.
