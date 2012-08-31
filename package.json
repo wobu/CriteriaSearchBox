@@ -7,6 +7,8 @@
 		"url": "https://github.com/wobu/CriteriaSearchBox.git"
 	},
 	"devDependencies": {
-		"grunt": "0.3.x"
+		"grunt": "0.3.x",
+		"express": "3.x",
+		"coll": "0.1.x"
 	}
 }

@@ -1,46 +1,99 @@
-var http = require('http');
-var fs = require('fs');
-var path = require('path');
+var express = require('express');
+var coll = require('coll');
 
-http.createServer(function (request, response) {
+var app = express();
 
-	console.log('request starting...');
+app.configure(function () {
+	app.use(express.bodyParser());
+	app.use(express.methodOverride());
+	app.use(app.router);
+	app.use(express.static(__dirname));
+	app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
+});
 
-	var filePath = '.' + request.url;
-	if (filePath == './')
-		filePath = './index.htm';
-
-	var extname = path.extname(filePath);
-	var contentType = 'text/html';
-	switch (extname) {
-		case '.js':
-			contentType = 'text/javascript';
-			break;
-		case '.css':
-			contentType = 'text/css';
-			break;
+var allCriterias = [
+	{
+		id: "category1",
+		displayValue: "Category 1",
+		type: 'category',
+		parent: '',
+		level: 0
+	},
+	{
+		id: "category2",
+		displayValue: "Category 2",
+		type: 'category',
+		parent: '',
+		level: 0
+	},
+	{
+		id: "category1.1",
+		displayValue: "Category 1.1",
+		type: 'category',
+		parent: 'category1',
+		level: 1
+	},
+	{
+		id: "category1.1.1",
+		displayValue: "Category 1.1.1",
+		type: 'category',
+		parent: 'category1.1',
+		level: 2
+	},
+	{
+		id: "category1.1.2",
+		displayValue: "Category 1.1.2",
+		type: 'category',
+		parent: 'category1.1',
+		level: 2
+	},
+	{
+		id: "item1.1.3",
+		displayValue: "Item 1.1.3",
+		type: '',
+		parent: 'category1.1',
+		level: 2
 	}
+];
 
-	path.exists(filePath, function (exists) {
 
-		if (exists) {
-			fs.readFile(filePath, function (error, content) {
-				if (error) {
-					response.writeHead(500);
-					response.end();
-				}
-				else {
-					response.writeHead(200, { 'Content-Type': contentType });
-					response.end(content, 'utf-8');
-				}
-			});
-		}
-		else {
-			response.writeHead(404);
-			response.end();
-		}
-	});
+app.get('/api', function (req, res) {
+	var allCriteriaList = coll.List(allCriterias);
 
-}).listen(8000);
+	var result = allCriteriaList.findAll(function (item, index, list) {
+		return item.level == 0;
+	}).toArray();
 
-console.log('Server running at http://127.0.0.1:8000/');
+	res.send(result);
+});
+
+app.get('/api/:searchExpression', function (req, res) {
+	var allCriteriaList = coll.List(allCriterias);
+
+	var result = allCriteriaList.findAll(function (item, index, list) {
+		return item.displayValue.toLowerCase().indexOf(req.params.searchExpression.toLowerCase()) !== -1 && item.level == 0;
+	}).toArray();
+
+	res.send(result);
+});
+
+app.post('/api', function (req, res) {
+
+	var searchExpression = req.body.searchExpression || '',
+		selectedCriterias = req.body.selectedCriterias;
+
+	var selectedCriteriasList = coll.List(selectedCriterias);
+	var selectedCategoryWithLowestLevel = selectedCriteriasList.max('level');
+
+	var allCriteriaList = coll.List(allCriterias);
+
+	var result = allCriteriaList.findAll(function (item, index, list) {
+		return item.displayValue.toLowerCase().indexOf(searchExpression.toLowerCase()) !== -1
+				&& item.parent == selectedCategoryWithLowestLevel.id;
+	}).toArray();
+
+	res.send(result);
+});
+
+app.listen(8000);
+console.log('Listening on port 8000');

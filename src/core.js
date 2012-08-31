@@ -131,11 +131,9 @@ var CriteriaSearchBox = function (element, options) {
 
 			if (selectedCriterias.length === 0) {
 				$.ajax({
-					url: settings.autoCompletionUrl,
+					url: settings.autoCompletionUrl + '/' + searchExpression, //TODO
 					dataType: 'json',
-					type: "GET",
-					contentType: "application/json",
-					data: { searchExpression: searchExpression }
+					type: "GET"
 				}).done(function (data) {
 					$.each(data, function (index, value) {
 						dropDownCriterias[index] =
