@@ -65,4 +65,5 @@ module.exports = function (grunt) {
 	// Default task.
 	grunt.registerTask('default', 'qunit concat min lint');
 
+	grunt.registerTask('heroku', 'clean concat min');
 };
