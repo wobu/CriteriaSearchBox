@@ -8,9 +8,7 @@
 	},
 	"dependencies": {
 		"express": "3.x",
-		"coll": "0.1.x"
-	},
-	"devDependencies": {
+		"coll": "0.1.x",
 		"grunt": "0.3.x"
 	},
 	"engines": {
