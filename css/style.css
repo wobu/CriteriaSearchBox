@@ -1,13 +1,33 @@
-.container {
-	width: 500px;
-	background: none repeat scroll 0 0 #F1F1F1;
-    border: 1px solid #D2D2D2;
-    margin: auto;
-    top: 50px;
-    position: relative;
-    padding: 50px 100px;
+body {
+	font-family: arial,sans-serif;
 }
 
+.container {
+	width: 500px;
+    margin-left: auto;
+    margin-right: auto;
+    top: 50px;
+    position: relative; 
+    background-color: #F5F5F5;
+    border: 1px solid #E3E3E3;
+    border-radius: 4px 4px 4px 4px;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05) inset;
+    min-height: 20px;
+    padding: 19px;
+}
+
+a {
+    color: #317EAC;
+    text-decoration: none;
+}
+a:hover {
+    color: #317EAC;
+    text-decoration: underline;
+}
+
+ul {
+	list-style-type: none;
+}
 /*
  * Search Box Design (Google+)
  */
