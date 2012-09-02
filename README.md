@@ -1,6 +1,9 @@
 CriteriaSearchBox
 =================
 
+[Demo](http://criteriasearchbox.herokuapp.com/demo.html)
+
+
 Description
 ----------
 
@@ -41,3 +44,55 @@ node server
 ```
 
 this web server will server the static files and will provide a simple api webservice for testing.
+
+### Developing a web service
+
+A sample webservice can be found in the **server.js** file.
+
+The webservice must handle 3 types of requests:
+
+```bash
+GET /
+```
+
+This request will be sent when nothing has been selected yet. This should return all root criterias.
+
+
+```bash
+GET /:searchExpression
+```
+
+This will be requested when the user enters a search expression and no criteria has been selected yet.  
+**:searchExpression** will be the search expression.
+
+```bash
+POST /
+```
+
+This will be requested when criterias has been selected.
+
+Following POST parameters exists:  
+* **searchExpression**: The search expression  
+* **selectedCriterias**: Array containing the JSON objects of all selected criterias.  
+
+
+#### JSON object definition
+
+```json
+	{
+		id: "category1",
+		displayValue: "Category 1",
+		type: 'category',
+		parent: '',
+		level: 0
+	}
+```
+
+**id**: can be referenced in the **parent** property.  
+**displayValue**: the value will be rendered in HTML  
+**type**: the value will be used as CSS class  
+**parent**: [OPTIONAL] when set the object is a child of the referenced object.  
+**level**: this isn't used by the client itself, but it is easier for the webservice to find the next level of childs.  
+
+*Note: the object can be extended with custom properties. The client posts the same JSON object back to the webservice.*
+
