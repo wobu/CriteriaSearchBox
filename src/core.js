@@ -1,80 +1,90 @@
 var defaultSettings = {
 	autoCompletionUrl: '',
-	searchUrl: ''
+	selectedCriteriaLinkClasses: '',
+	selectedCriteriaContentToPrepend: ''
 },
 constants = {
 	jQueryPluginName: 'criteriaSearchBox',
-	criteriaSearchBoxClassName: 'criteriaSearchBox',
-	searchBoxContainerClassName: 'searchBoxContainer',
-	actionSectionClassName: 'actionSection',
 	selectedCriteriaContainerClassName: 'selectedCriteriaContainer',
-	inputSectionClassName: 'inputSection',
-	dropDownContainerClassName: 'dropDownContainer',
-	selectedClassName: 'selected',
-	removeIconClassName: 'icon-remove'
+	dropDownClassName: 'criteriaSearchBoxDropDown'
 };
 
-var CriteriaSearchBox = function (element, options) {
-	this.element = $(element);
+var CriteriaSearchBox = function ($element, options) {
+	this.$element = $($element);
 	var object = this;
 	var settings = $.extend(defaultSettings, options || {});
 
-	var criteriaSearchBoxElement, searchBoxContainer, selectedCriteriaContainer, inputSection, actionSection, searchButton, dropDownContainer,
-		selectedCriterias = [], dropDownCriterias = [], selectedIndex = -1,
+	var $selectedCriteriaContainer, $inputElement, $searchButton, $dropDown, $formElement,
+		selectedCriterias = [], $dropDownCriterias = [], selectedIndex = -1,
 		dropDownCriteriasAreUpToDate = false;
 
 	var init = function () {
-		if (object.element.is('input[type=text]') || object.element.is('input[type=search]')) {
-
-
-			criteriaSearchBoxElement = $('<div>').addClass(constants.criteriaSearchBoxClassName);
-			searchBoxContainer = $('<div>').addClass(constants.searchBoxContainerClassName);
-			selectedCriteriaContainer = $('<div>').addClass(constants.selectedCriteriaContainerClassName);
-			inputSection = $('<span>').addClass(constants.inputSectionClassName);
-			actionSection = $('<span>').addClass(constants.actionSectionClassName);
-			searchButton = $('<button type="submit">').html('Search'); // TODO
-			dropDownContainer = $('<div>').addClass(constants.dropDownContainerClassName).css({ display: 'none' });
-
-			object.element.wrap(criteriaSearchBoxElement);
-			object.element.before(selectedCriteriaContainer);
-			object.element.after(dropDownContainer);
-			object.element.wrap(searchBoxContainer);
-			object.element.before(actionSection);
-			object.element.wrap(inputSection);
-			searchButton.appendTo(actionSection);
-
-			// reload container element after DOM manipulation, i.e. for getting his width
-			// TODO exists there a better solution? i am not satisfied with it.
-			searchBoxContainer = $('div.' + constants.searchBoxContainerClassName);
-
-			object.element.focus(onFocus);
-			object.element.focusout(onFocusout);
-			object.element.keyup(onKeyUp);
-
-			searchButton.click(onSearch);
-
-			criteriaSearchBoxElement.click(function (event) {
-				event.preventDefault();
-			});
-		} else {
-			if (console !== undefined) {
-				console.error('CriteriaSearchBox must be called only on a text or search input element!');
+		
+		$selectedCriteriaContainer = $('.' + constants.selectedCriteriaContainerClassName, object.$element);
+		$dropDown = $('.' + constants.dropDownClassName, object.$element);
+		$inputElement = $('input[type=text], input[type=search]', object.$element);
+		$searchButton = $('button[type=submit], input[type=submit]', object.$element);
+		$formElement = $('form', object.$element);
+		
+		if (isValid()) {
+			if ($inputElement.is(':focus')) {
+				initializeCriteriaDropDownList();
 			}
+			
+			$inputElement.focus(onFocus);
+			$inputElement.click(onGlobalClick);
+			$inputElement.keydown(onKeyDown);
+			$inputElement.keyup(onKeyUp);
+			
+			$searchButton.click(onSearch);			
 		}
+	};
+		
+	var isValid = function() {	
+		if ($selectedCriteriaContainer.length !== 1) {
+			throw 'No container for the selected criterias has been defined.';
+		} 
+		
+		if ($dropDown.length !== 1) {
+			throw 'No dropdown has been defined.';
+		} 
+		
+		if ($inputElement.length !== 1) {
+			throw 'No input $element has been defined.';
+		} 
+		
+		if ($searchButton.length !== 1) {
+			throw 'No submit button has been defined.';
+		} 
+		
+		if ($formElement.length  !== 1) {
+			throw 'No form $element has been defined.';
+		}
+		
+		if ($formElement.attr('method') !== 'post') {
+			throw 'Form $element\'s method must be POST';
+		}
+		
+		return true;
 	};
 
 	var onFocus = function () {
-		initializeCriteriaDropDownList();
-
-		if (!dropDownContainer.is(':visible')) {
-			dropDownContainer.width(searchBoxContainer.innerWidth());
-			dropDownContainer.slideDown('fast');
-		}
+		selectedIndex = -1;
 	};
 
-	var onFocusout = function () {
-		if (!dropDownContainer.is(':hover')) {
-			dropDownContainer.hide();
+	var onGlobalClick = function (event) {	
+		var $sourceElement;
+		
+		if ($inputElement[0] === event.target) {
+			initializeCriteriaDropDownList();
+			event.preventDefault();
+			event.stopPropagation();
+			return;
+		}
+		
+		// hide only the drop down if we clicked outside of our search box container
+		if (object.$element.closest(event.target).length === 1) {
+			$dropDown.hide();
 		}
 	};
 
@@ -82,67 +92,60 @@ var CriteriaSearchBox = function (element, options) {
 		dropDownCriteriasAreUpToDate = false;
 		initializeCriteriaDropDownList();
 	};
-
+	
 	var onSearch = function () {
-		$.ajax({
-			url: settings.searchUrl,
-			dataType: 'json',
-			type: "POST",
-			contentType: "application/json",
-			data: JSON.stringify({ searchExpression: object.element.val(), selectedCriterias: selectedCriterias })
-		});
+		// TODO create hidden input fields
+		$formElement.submit();
+	};
+	
+	var onKeyDown = function (event) {
+		$inputElement.data('lastValue', $inputElement.val());
+	};
+	
+	var onKeyUp = function (event) {
+		if ($inputElement.data('lastValue') !== $inputElement.val()) {
+			onSearchChanged();
+		}
 	};
 
-	var onKeyUp = function (event) {
-		switch (event.which) {
-			case 13: // Enter button
-				if (selectedIndex > -1) {
-					dropDownCriterias[selectedIndex].click();
-					event.preventDefault();
-				}
-				break;
-			case 38: // Arrow up
-				if (selectedIndex > -1) {
-					updateSelectedDropDownItem(selectedIndex, --selectedIndex);
-				}
-
-				event.preventDefault();
-				break;
-			case 40: // Arrow down
-				if ((selectedIndex + 1) < dropDownCriterias.length) {
-					updateSelectedDropDownItem(selectedIndex, ++selectedIndex);
-				}
-
-				event.preventDefault();
-				break;
-			default:
-				onSearchChanged();
-				break;
+	var onGlobalKeyDown = function (event) {
+		if (!/(38|40)/.test(event.keyCode)) {
+			return;
+		}
+		
+		event.preventDefault();
+		event.stopPropagation();
+		
+		if (event.keyCode === 38 && selectedIndex > -1) { //up
+			updateDropDownItemFocus(--selectedIndex);
+		} else if (event.keyCode === 40 && selectedIndex < $dropDownCriterias.length - 1) { //down
+			updateDropDownItemFocus(++selectedIndex);	
 		}
 	};
 
 	var initializeCriteriaDropDownList = function () {
-
+					
 		if (!dropDownCriteriasAreUpToDate) {
 			// TODO avoid flickering when refreshing the content
 			resetCriteriaDropDownList();
 
-			var searchExpression = object.element.val();
+			var searchExpression = $inputElement.val();
 
 			if (selectedCriterias.length === 0) {
 				$.ajax({
 					url: settings.autoCompletionUrl + '/' + searchExpression, //TODO
+					async: false,
 					dataType: 'json',
 					type: "GET"
 				}).done(function (data) {
 					$.each(data, function (index, value) {
-						dropDownCriterias[index] =
+						$dropDownCriterias[index] =
 							new DropDownItem(
-								dropDownContainer,
+								$dropDown,
 								value,
 								index,
 								function (dropDownItem) { dropDownItemClicked(dropDownItem); },
-								function (dropDownItem) { updateSelectedDropDownItem(selectedIndex, dropDownItem.index); });
+								function (dropDownItem) { updateDropDownItemFocus(dropDownItem.index); });
 					});
 				});
 			} else {
@@ -155,61 +158,66 @@ var CriteriaSearchBox = function (element, options) {
 
 				$.ajax({
 					url: settings.autoCompletionUrl,
+					async: false,
 					dataType: 'json',
 					type: "POST",
 					contentType: "application/json",
 					data: JSON.stringify({ searchExpression: searchExpression, selectedCriterias: selectedData })
 				}).done(function (data) {
 					$.each(data, function (index, value) {
-						dropDownCriterias[index] =
+						$dropDownCriterias[index] =
 							new DropDownItem(
-								dropDownContainer,
+								$dropDown,
 								value,
 								index,
 								function (dropDownItem) { dropDownItemClicked(dropDownItem); },
-								function (dropDownItem) { updateSelectedDropDownItem(selectedIndex, dropDownItem.index); });
+								function (dropDownItem) { updateDropDownItemFocus(dropDownItem.index); });
 					});
 				});
 			}
 
 			dropDownCriteriasAreUpToDate = true;
 		}
+		
+		if ($dropDownCriterias.length === 0) {
+			$dropDown.hide();
+			$(object.$element).off('keydown.criteriaSearchBox');
+			$('body').off('click.criteriaSearchBox');
+		} else if (!$dropDown.is(':visible')) {
+			$dropDown.slideDown('fast');
+			$(object.$element).on('keydown.criteriaSearchBox', onGlobalKeyDown);
+			$('body').on('click.criteriaSearchBox', onGlobalClick);
+		}
 	};
 
 	var resetCriteriaDropDownList = function () {
+		$dropDownCriterias = [];
+		$dropDown.empty();
 		selectedIndex = -1;
-		dropDownCriterias = [];
-		dropDownContainer.empty();
 	};
 
-	var updateSelectedDropDownItem = function (oldIndex, newIndex) {
-
-		if (oldIndex !== -1) {
-			dropDownCriterias[oldIndex].deselect();
-		}
+	var updateDropDownItemFocus = function (newIndex) {
 
 		if (newIndex !== -1) {
-			dropDownCriterias[newIndex].select();
+			$dropDownCriterias[newIndex].focus();
+		} else if (!$inputElement.is(':focus')) {
+			$inputElement.focus();
 		}
-
+		
 		selectedIndex = newIndex;
 	};
 
 	var dropDownItemClicked = function (dropDownItem) {
 		var selectedCriteriaItem = new SelectedCriteriaItem(
-										selectedCriteriaContainer,
+										$selectedCriteriaContainer,
 										dropDownItem.data,
-										function (selectedCriteriaItem) { selectedCriteriaItemClicked(selectedCriteriaItem); });
+										function (selectedCriteriaItem) { selectedCriteriaItemClicked(selectedCriteriaItem); },
+										settings);
 		selectedCriterias.push(selectedCriteriaItem);
 
-		// reset selection and index to avoid double clicks or endless loops with hitting enter
-		updateSelectedDropDownItem(selectedIndex, -1);
-		selectedIndex = -1;
-
-		dropDownCriteriasAreUpToDate = false;
-
-		object.element.val('');
-		object.element.focus();
+		$inputElement.val('');		
+		onSearchChanged();
+		$inputElement.focus();
 	};
 
 	var selectedCriteriaItemClicked = function (selectedCriteriaItem) {
@@ -229,29 +237,26 @@ var CriteriaSearchBox = function (element, options) {
 			item.remove();
 		});
 
-		object.element.focus();
 		onSearchChanged();
 	};
 
 	init();
 };
 
-var SelectedCriteriaItem = function (container, data, onclick) {
+var SelectedCriteriaItem = function (container, data, onclick, settings) {
 	var object = this;
-	this.container = container;
+	this.$container = container;
 	this.data = data;
-	this.element = null;
-
+	this.$element = null;
+	
 	var init = function () {
-		var removeIconElement = $('<i>').addClass(constants.removeIconClassName);
+		object.$element = $('<a>').addClass(settings.selectedCriteriaLinkClasses + ' ' + object.data.type);
+		object.$element.append(settings.selectedCriteriaContentToPrepend);
+		object.$element.append(object.data.displayValue);
 
-		object.element = $('<a>').addClass(object.data.type);
-		object.element.append(removeIconElement);
-		object.element.append(object.data.displayValue);
+		object.$container.append(object.$element);
 
-		object.container.append(object.element);
-
-		object.element.click(onClick);
+		object.$element.click(onClick);
 	};
 
 	var onClick = function () {
@@ -259,7 +264,7 @@ var SelectedCriteriaItem = function (container, data, onclick) {
 	};
 
 	this.remove = function () {
-		object.element.remove();
+		object.$element.remove();
 	};
 
 	init();
@@ -267,21 +272,20 @@ var SelectedCriteriaItem = function (container, data, onclick) {
 
 var DropDownItem = function (container, data, index, onclick, onhover) {
 	var object = this;
-	this.container = container;
+	this.$container = container;
 	this.data = data;
 	this.index = index;
-
-	var dropDownItem;
+	this.$element = null;
 
 	var init = function () {
-		dropDownItem = $('<div>').append($('<span>').html(data.displayValue));
-		object.container.append(dropDownItem);
+		object.$element = $('<a href=\"#\">').html(data.displayValue);
+		object.$container.append($('<li>').append(object.$element));
 
-		dropDownItem.click(onClick);
-		dropDownItem.hover(onHover);
+		object.$element.click(onClick);
+		object.$element.hover(onHover);
 	};
 
-	var onClick = function () {
+	var onClick = function (event) {
 		onclick(object);
 	};
 
@@ -289,16 +293,8 @@ var DropDownItem = function (container, data, index, onclick, onhover) {
 		onhover(object);
 	};
 
-	this.select = function () {
-		dropDownItem.addClass(constants.selectedClassName);
-	};
-
-	this.deselect = function () {
-		dropDownItem.removeClass(constants.selectedClassName);
-	};
-
-	this.click = function () {
-		dropDownItem.click();
+	this.focus = function () {
+		object.$element.focus();
 	};
 
 	init();
