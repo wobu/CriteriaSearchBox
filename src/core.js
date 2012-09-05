@@ -39,33 +39,41 @@ var CriteriaSearchBox = function ($element, options) {
 			$searchButton.click(onSearch);			
 		}
 	};
+	
+	// Validates if all DOM elements are defined, needed for the search box and throws an exception accordingly.
+	var isValid = function() {
+		var error = '';	
 		
-	var isValid = function() {	
 		if ($selectedCriteriaContainer.length !== 1) {
-			throw 'No container for the selected criterias has been defined.';
+			error += 'No container for the selected criterias has been defined.\n';
 		} 
 		
 		if ($dropDown.length !== 1) {
-			throw 'No dropdown has been defined.';
+			error += 'No dropdown has been defined.\n';
 		} 
 		
 		if ($inputElement.length !== 1) {
-			throw 'No input $element has been defined.';
+			error += 'No input $element has been defined.\n';
 		} 
 		
 		if ($searchButton.length !== 1) {
-			throw 'No submit button has been defined.';
+			error += 'No submit button has been defined.\n';
 		} 
 		
 		if ($formElement.length  !== 1) {
-			throw 'No form $element has been defined.';
+			error += 'No form $element has been defined.\n';
 		}
 		
 		if ($formElement.attr('method') !== 'post') {
-			throw 'Form $element\'s method must be POST';
+			error += 'Form $element\'s method must be POST.\n';
 		}
 		
-		return true;
+		// will throw an exception
+		if (error.length > 0) {
+			$.error(error);
+		}
+		
+		return error.length === 0;
 	};
 
 	var onFocus = function () {

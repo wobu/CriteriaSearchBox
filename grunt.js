@@ -21,7 +21,7 @@ module.exports = function (grunt) {
 			dist: {
 				src: [
 			'<banner:meta.banner>',
-			'src/jquery.plugin.intro.js',
+			'src/intro.js',
 			'src/core.js',
 			'src/jquery.plugin.outro.js'
 		],
